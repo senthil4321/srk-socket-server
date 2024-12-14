@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Iinclude -Wall
-SRC = src/main.c src/socket_server.c
+SRC = src/socket_server.c
 OBJ = $(SRC:.c=.o)
 TARGET = server
 
