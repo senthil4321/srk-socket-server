@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <signal.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <signal.h>
 #include "socket_server.h"
 
 #define BUFFER_SIZE 1024
@@ -30,6 +34,14 @@ void start_server(const char *server_ip, int server_port) {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket < 0) {
         perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Allow the server to reuse the address
+    int opt = 1;
+    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        perror("setsockopt failed");
+        close(server_socket);
         exit(EXIT_FAILURE);
     }
 
