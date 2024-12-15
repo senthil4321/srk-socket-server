@@ -51,3 +51,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 c-socket-server/server
+c-socket-server/socket_server
