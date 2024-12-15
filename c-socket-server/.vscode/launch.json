@@ -1,26 +1,28 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "WSL: Launch",
+            "name": "(gdb) Launch working",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/server", // Path to your compiled executable
+            "program": "${workspaceFolder}/server",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "pipeTransport": {
-                "pipeCwd": "",
-                "pipeProgram": "wsl",
-                "pipeArgs": [],
-                "debuggerPath": "/usr/bin/gdb"
-            },
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
                     "ignoreFailures": true
                 }
             ],
