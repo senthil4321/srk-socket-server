@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
+#include <stdlib.h>
 
 #define PORT 9876
 #define BUFFER_SIZE 1024
@@ -19,12 +20,17 @@ void handle_signal(int signal) {
     }
 }
 
-int main() {
+int main(int argc, char const *argv[]) {
     int new_socket;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
     char *hello = "Hello from server";
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <interface>\n", argv[0]);
+        return -1;
+    }
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -32,9 +38,9 @@ int main() {
         return -1;
     }
 
-    // Forcefully attaching socket to the port 9876
+    // Forcefully attaching socket to the specified interface and port 9876
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_addr.s_addr = inet_addr(argv[1]);
     address.sin_port = htons(PORT);
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
