@@ -3,13 +3,21 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <signal.h> // Include signal handling
 
 #define PORT 9876
 #define MESSAGE "Hello from client"
 #define INTERVAL 3 // 3 seconds
 
+int sock = 0; // Make sock a global variable for signal handler access
+
+void handle_shutdown(int sig) {
+    printf("\nReceived shutdown signal. Closing socket.\n");
+    close(sock);
+    exit(0);
+}
+
 int main(int argc, char const *argv[]) {
-    int sock = 0;
     struct sockaddr_in serv_addr;
     char buffer[1024] = {0};
 
@@ -37,6 +45,10 @@ int main(int argc, char const *argv[]) {
         printf("\nConnection Failed \n");
         return -1;
     }
+
+    // Register signal handler
+    signal(SIGINT, handle_shutdown);
+    signal(SIGTERM, handle_shutdown);
 
     while (1) {
         if (send(sock, MESSAGE, strlen(MESSAGE), 0) == -1) {
