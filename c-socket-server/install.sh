@@ -12,15 +12,15 @@ if [ $? -ne 0 ]; then
 fi
 
 # Create a directory for the server program if it doesn't exist
-INSTALL_DIR="/usr/local/bin/server-program"
+INSTALL_DIR="/usr/local/bin/srk-server"
 if [ ! -d "$INSTALL_DIR" ]; then
     sudo mkdir -p "$INSTALL_DIR"
 fi
 
 # Copy the compiled executable to the installation directory
-sudo cp ./src/socket_server "$INSTALL_DIR"
+sudo cp ./srk-socket-server "$INSTALL_DIR"
 
 # Set the appropriate permissions
-sudo chmod +x "$INSTALL_DIR/socket_server"
+sudo chmod +x "$INSTALL_DIR/srk-socket-server"
 
 echo "Server program installed successfully in $INSTALL_DIR."

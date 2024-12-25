@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Iinclude -Wall
 SRC = socket_server.c
 OBJ = $(SRC:.c=.o)
-TARGET = server
+TARGET = srk-socket-server
 
 all: $(TARGET)
 
