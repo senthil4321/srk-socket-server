@@ -8,10 +8,15 @@
 #define MESSAGE "Hello from client"
 #define INTERVAL 3 // 3 seconds
 
-int main() {
+int main(int argc, char const *argv[]) {
     int sock = 0;
     struct sockaddr_in serv_addr;
     char buffer[1024] = {0};
+
+    if (argc != 2) {
+        printf("Usage: %s <server_address>\n", argv[0]);
+        return -1;
+    }
 
     // Creating socket file descriptor
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -23,7 +28,7 @@ int main() {
     serv_addr.sin_port = htons(PORT);
 
     // Convert IPv4 and IPv6 addresses from text to binary form
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, argv[1], &serv_addr.sin_addr) <= 0) {
         printf("\nInvalid address/ Address not supported \n");
         return -1;
     }
@@ -34,9 +39,15 @@ int main() {
     }
 
     while (1) {
-        send(sock, MESSAGE, strlen(MESSAGE), 0);
+        if (send(sock, MESSAGE, strlen(MESSAGE), 0) == -1) {
+            printf("Failed to send message. Server might have closed the connection.\n");
+            break;
+        }
         printf("Message sent to server\n");
-        read(sock, buffer, 1024);
+        if (read(sock, buffer, 1024) <= 0) {
+            printf("Failed to read message. Server might have closed the connection.\n");
+            break;
+        }
         printf("Message from server: %s\n", buffer);
         sleep(INTERVAL);
     }
