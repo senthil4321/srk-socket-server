@@ -62,10 +62,17 @@ int main(int argc, char const *argv[]) {
             return -1;
         }
 
-        read(new_socket, buffer, BUFFER_SIZE);
-        printf("Message from client: %s\n", buffer);
-        send(new_socket, hello, strlen(hello), 0);
-        printf("Hello message sent\n");
+        while (1) {
+            int valread = read(new_socket, buffer, BUFFER_SIZE);
+            if (valread <= 0) {
+                printf("Client disconnected\n");
+                break;
+            }
+            buffer[valread] = '\0';
+            printf("Message from client: %s\n", buffer);
+            send(new_socket, hello, strlen(hello), 0);
+            printf("Hello message sent\n");
+        }
 
         close(new_socket);
     }
