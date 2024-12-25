@@ -8,7 +8,7 @@ Restart=always
 RestartSec=5
 User=nobody
 Group=nogroup
-StartLimitIntervalSec=60
+StartLimitInterval=60s
 StartLimitBurst=3
 
 [Install]
