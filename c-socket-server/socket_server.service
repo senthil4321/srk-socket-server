@@ -3,10 +3,12 @@ Description=SRK Socket Server
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/srk-server/srk-socket-server 192.168.100.22
 Restart=always
+RestartSec=5
 User=nobody
 Group=nogroup
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Install]
 WantedBy=multi-user.target
