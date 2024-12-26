@@ -27,7 +27,7 @@ fi
 
 # Copy new files (assuming the new executable is in the current directory)
 echo "Deploying new version of $SERVICE_NAME..."
-sudo cp ./srk-socket-server /usr/local/bin/
+sudo cp ./srk-socket-server $INSTALL_DIR
 # Set the appropriate permissions
 sudo chmod +x "$INSTALL_DIR/srk-socket-server"
 
