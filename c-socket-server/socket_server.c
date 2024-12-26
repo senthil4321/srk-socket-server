@@ -12,6 +12,7 @@
 #define BUFFER_SIZE 1024
 
 int server_fd;
+DLT_DECLARE_CONTEXT(dlt_ctx); // Declare dlt_ctx at the global scope
 
 void handle_signal(int signal) {
     if (signal == SIGINT) {
@@ -23,7 +24,6 @@ void handle_signal(int signal) {
 }
 
 int main(int argc, char const *argv[]) {
-    DLT_DECLARE_CONTEXT(dlt_ctx);
     DLT_REGISTER_APP("SRK", "SRK Socket Server");
     DLT_REGISTER_CONTEXT(dlt_ctx, "SRKS", "SRK Socket Server Context");
 
