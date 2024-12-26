@@ -105,7 +105,7 @@ int main(int argc, char const *argv[]) {
                 break;
             }
             buffer[valread] = '\0';
-            DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Message from Client: %s"), DLT_STRING(buffer));
+            DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Message from Client: "), DLT_STRING(buffer));
             send(new_socket, hello, strlen(hello), 0);
             DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Hello message sent"));
         }
