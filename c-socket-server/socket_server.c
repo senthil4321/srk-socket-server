@@ -15,9 +15,22 @@ int server_fd;
 DLT_DECLARE_CONTEXT(dlt_ctx); // Declare dlt_ctx at the global scope
 
 void handle_signal(int signal) {
-    if (signal == SIGINT) {
+    const char *signal_str;
+    switch (signal) {
+        case SIGINT:
+            signal_str = "SIGINT";
+            break;
+        case SIGTERM:
+            signal_str = "SIGTERM";
+            break;
+        default:
+            signal_str = "UNKNOWN";
+    }
+    DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Received signal: "), DLT_STRING(signal_str));
+    if (signal == SIGINT || signal == SIGTERM) { // Handle both SIGINT and SIGTERM
         DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Shutting down server..."));
         close(server_fd);
+        DLT_UNREGISTER_CONTEXT(dlt_ctx);
         DLT_UNREGISTER_APP();
         exit(0);
     }
@@ -49,8 +62,19 @@ int main(int argc, char const *argv[]) {
     address.sin_addr.s_addr = inet_addr(argv[1]);
     address.sin_port = htons(PORT);
 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
-        DLT_LOG(dlt_ctx, DLT_LOG_ERROR, DLT_STRING("Bind failed"));
+    int bind_attempts = 5;
+    while (bind_attempts > 0) {
+        if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+            DLT_LOG(dlt_ctx, DLT_LOG_ERROR, DLT_STRING("Bind failed, retrying..."));
+            bind_attempts--;
+            sleep(1); // Wait for 1 second before retrying
+        } else {
+            break;
+        }
+    }
+
+    if (bind_attempts == 0) {
+        DLT_LOG(dlt_ctx, DLT_LOG_ERROR, DLT_STRING("Bind failed after multiple attempts"));
         close(server_fd);
         DLT_UNREGISTER_CONTEXT(dlt_ctx);
         DLT_UNREGISTER_APP();
@@ -63,6 +87,7 @@ int main(int argc, char const *argv[]) {
     }
 
     signal(SIGINT, handle_signal);
+    signal(SIGTERM, handle_signal); // Catch SIGTERM signal
 
     while (1) {
         DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Waiting for a connection..."));
@@ -78,7 +103,7 @@ int main(int argc, char const *argv[]) {
                 break;
             }
             buffer[valread] = '\0';
-            DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Message from client: %s"), buffer);
+            DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Message from client: "));
             send(new_socket, hello, strlen(hello), 0);
             DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Hello message sent"));
         }
