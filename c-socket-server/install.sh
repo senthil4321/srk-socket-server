@@ -17,10 +17,26 @@ if [ ! -d "$INSTALL_DIR" ]; then
     sudo mkdir -p "$INSTALL_DIR"
 fi
 
-# Copy the compiled executable to the installation directory
-sudo cp ./srk-socket-server "$INSTALL_DIR"
+SERVICE_NAME="srk-socket-server"
 
+# Check if the service is running
+if systemctl is-active --quiet $SERVICE_NAME; then
+    echo "Stopping $SERVICE_NAME service..."
+    sudo systemctl stop $SERVICE_NAME
+fi
+
+# Copy new files (assuming the new executable is in the current directory)
+echo "Deploying new version of $SERVICE_NAME..."
+sudo cp ./srk-socket-server /usr/local/bin/
 # Set the appropriate permissions
-sudo chmod +x "$INSTALL_DIR/srk-socket-server"
+sudo chmod +x "$INSTALL_DIR/$SERVICE_NAME"
+
+# Start the service again
+echo "Starting $SERVICE_NAME service..."
+sudo systemctl start $SERVICE_NAME
+
+# Check the status of the service
+sudo systemctl status $SERVICE_NAME
+
 
 echo "Server program installed successfully in $INSTALL_DIR."
