@@ -17,7 +17,7 @@ if [ ! -d "$INSTALL_DIR" ]; then
     sudo mkdir -p "$INSTALL_DIR"
 fi
 
-SERVICE_NAME="srk-socket-server"
+SERVICE_NAME="socket_server.service"
 
 # Check if the service is running
 if systemctl is-active --quiet $SERVICE_NAME; then
@@ -29,7 +29,7 @@ fi
 echo "Deploying new version of $SERVICE_NAME..."
 sudo cp ./srk-socket-server /usr/local/bin/
 # Set the appropriate permissions
-sudo chmod +x "$INSTALL_DIR/$SERVICE_NAME"
+sudo chmod +x "$INSTALL_DIR/srk-socket-server"
 
 # Start the service again
 echo "Starting $SERVICE_NAME service..."
@@ -37,6 +37,4 @@ sudo systemctl start $SERVICE_NAME
 
 # Check the status of the service
 sudo systemctl status $SERVICE_NAME
-
-
 echo "Server program installed successfully in $INSTALL_DIR."
