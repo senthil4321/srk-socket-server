@@ -109,7 +109,7 @@ int main(int argc, char const *argv[]) {
 
         close(new_socket);
     }
-
+    DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Server Shutdown Complete"));
     close(server_fd);
     DLT_UNREGISTER_CONTEXT(dlt_ctx);
     DLT_UNREGISTER_APP();
