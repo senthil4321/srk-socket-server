@@ -13,6 +13,7 @@
 
 int server_fd;
 DLT_DECLARE_CONTEXT(dlt_ctx); // Declare dlt_ctx at the global scope
+volatile sig_atomic_t stop_server = 0; // Flag to indicate server should stop
 
 void handle_signal(int signal) {
     const char *signal_str;
@@ -29,10 +30,7 @@ void handle_signal(int signal) {
     DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Received signal: "), DLT_STRING(signal_str));
     if (signal == SIGINT || signal == SIGTERM) { // Handle both SIGINT and SIGTERM
         DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Shutting down server..."));
-        close(server_fd);
-        DLT_UNREGISTER_CONTEXT(dlt_ctx);
-        DLT_UNREGISTER_APP();
-        exit(0);
+        stop_server = 1; // Set flag to stop server
     }
 }
 
@@ -89,14 +87,15 @@ int main(int argc, char const *argv[]) {
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal); // Catch SIGTERM signal
 
-    while (1) {
+    while (!stop_server) {
         DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Waiting for a connection..."));
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+            if (stop_server) break; // Exit loop if stopping
             DLT_LOG(dlt_ctx, DLT_LOG_ERROR, DLT_STRING("Accept failed"));
             return -1;
         }
 
-        while (1) {
+        while (!stop_server) {
             int valread = read(new_socket, buffer, BUFFER_SIZE);
             if (valread <= 0) {
                 DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Client disconnected"));
