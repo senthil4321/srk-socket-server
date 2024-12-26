@@ -10,6 +10,7 @@
 
 #define PORT 9876
 #define BUFFER_SIZE 1024
+#define SERVER_VERSION "1.0.0" // Define server version
 
 int server_fd;
 DLT_DECLARE_CONTEXT(dlt_ctx); // Declare dlt_ctx at the global scope
@@ -37,6 +38,8 @@ void handle_signal(int signal) {
 int main(int argc, char const *argv[]) {
     DLT_REGISTER_APP("SRK", "SRK Socket Server");
     DLT_REGISTER_CONTEXT(dlt_ctx, "SRKS", "SRK Socket Server Context");
+
+    DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Starting SRK Socket Server version: "), DLT_STRING(SERVER_VERSION)); // Log server version
 
     int new_socket;
     struct sockaddr_in address;
