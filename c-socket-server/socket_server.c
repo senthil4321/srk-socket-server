@@ -100,14 +100,14 @@ int main(int argc, char const *argv[]) {
 
         while (!stop_server) {
             int valread = read(new_socket, buffer, BUFFER_SIZE);
-            if (valread <= 0) {
-                DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Client disconnected"));
+            if (valread <= 0 || stop_server) { // Exit read loop if stopping
+                DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Client disconnected or server stopping"));
                 break;
             }
             buffer[valread] = '\0';
             DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Message from Client: %s"), DLT_STRING(buffer));
             send(new_socket, hello, strlen(hello), 0);
-            DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Hello message sent 2"));
+            DLT_LOG(dlt_ctx, DLT_LOG_INFO, DLT_STRING("Hello message sent"));
         }
 
         close(new_socket);
