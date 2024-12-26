@@ -51,6 +51,9 @@ int main(int argc, char const *argv[]) {
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         DLT_LOG(dlt_ctx, DLT_LOG_ERROR, DLT_STRING("Bind failed"));
+        close(server_fd);
+        DLT_UNREGISTER_CONTEXT(dlt_ctx);
+        DLT_UNREGISTER_APP();
         return -1;
     }
 
